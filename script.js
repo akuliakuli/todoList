@@ -1,49 +1,76 @@
-let todoForm = document.querySelector(".todo-list-form"),
-    todoInput = document.querySelector('.todo-input'),
-    todoList = document.querySelector(".todo-list");
 
-let arr = []
-function getInfo(value){
-    let b;
-    if(value !== '' || value !== null){
-        b = value;
-    }else{
-        alert("Please write something")
+class TodoListDB{
+    constructor(todoForm,todoInput,todoList,todoCount){
+        this.todoForm = document.querySelector(todoForm),
+        this.todoInput = document.querySelector(todoInput),
+        this.todoList = document.querySelector(todoList);
+        this.todoCount = document.querySelector(todoCount)
+        this.arr = [];
     }
-    arr.push({text:value,checked:false});
-}
+} 
 
-function render(){
-    todoList.innerHTML = ""
-    arr.forEach(item => {
-        todoList.innerHTML += `
-        <li class="todo-item">
-        <input type ="checkbox" class ="done-todo">
-        ${item.text}
-        <button class= "todo-submit delete-todo">&#10006;</button>
-        </li>
-    `
-    })
-    arr.sort()
+class getInfo extends TodoListDB{
+    getUserInfo(value){
+        let b = value;
+        this.arr.push({text:b,checked:false});
+    }
 }
-function deleteTodo(){
-    todoList.addEventListener("click", (e) => {
-        if(e.target && e.target.closest(".delete-todo")){
-            e.target.parentElement.remove()
-            console.log(todoList.indexOf(e.target))
+class Display extends getInfo{
+    render(){
+        this.todoList.innerHTML = "";
+        this.arr.forEach(item => {
+            this.todoList.innerHTML += `
+                <li class="todo-item">
+                <input type ="checkbox" class ="done-todo">
+                ${item.text}
+                <button class= "todo-submit delete-todo">&#10006;</button>
+                </li>`
+        })
+    }
+}
+class Delete extends Display{
+    deleteElem(){
+        this.todoList.addEventListener("click", (e) => {
+            if(e.target && e.target.matches(".delete-todo")){
+                e.target.parentElement.remove()
+                     this.arr = this.arr.filter(item => {
+                         if(!item.value == e.target.parentElement.textContent){
+                            return item
+                     }
+               })
+
+               this.count()
+            }        
+        })
+    }
+    count(){
+        if(this.arr.length == 0 || this.arr.length < 0){
+            this.todoCount.textContent = `COUNT :${0}`
+        }else{
+            this.todoCount.textContent = `COUNT :${this.arr.length}`
         }
-    })
-}
-deleteTodo()
-todoForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    if(todoInput.value !== "" && todoInput.value !== 0){
-        getInfo(todoInput.value)
-        render()
-        todoInput.placeholder = ""
-    }else{
-        todoInput.placeholder = "Please write something"
     }
-    todoInput.placeholder = ""
-    e.target.reset()
-})
+}
+class DisplayOnPage extends Delete{
+    showPage(){
+        this.todoForm.addEventListener("submit", (e) => {
+            e.preventDefault()
+            if(this.todoInput.value !== '' && this.todoInput.value !== null){
+                this.getUserInfo(this.todoInput.value)
+                this.arr.sort();
+                this.render();
+                this.count()
+                this.todoInput.placeholder = "";
+            }else{
+                this.todoInput.placeholder = "Please write something";
+            }
+            e.target.reset()
+
+        })
+    }
+}
+
+let b = new DisplayOnPage(".todo-list-form",".todo-input",".todo-list",".todo-list-title");
+b.showPage()
+b.deleteElem()
+b.count()
