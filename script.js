@@ -6,6 +6,7 @@ class TodoListDB{
         this.todoList = document.querySelector(todoList);
         this.todoCount = document.querySelector(todoCount)
         this.arr = [];
+        this.count = 0;
     }
 } 
 
@@ -38,20 +39,26 @@ class Delete extends Display{
                             return item
                      }
                })
-
-               this.count()
-            }        
+               this.negativeCount()   
+            }  
         })
     }
-    count(){
-        if(this.arr.length == 0 || this.arr.length < 0){
-            this.todoCount.textContent = `COUNT :${0}`
-        }else{
-            this.todoCount.textContent = `COUNT :${this.arr.length}`
-        }
-    }
+  
 }
-class DisplayOnPage extends Delete{
+class Count extends Delete{
+    negativeCount(){
+        this.count--
+        if(this.count <= 0){
+            this.count = 0;
+        }
+        this.todoCount.textContent = `COUNT : ${this.count}`
+    }
+    positiveCount(){
+        this.count++
+        this.todoCount.textContent = `COUNT : ${this.count}`
+        }
+}
+class DisplayOnPage extends Count{
     showPage(){
         this.todoForm.addEventListener("submit", (e) => {
             e.preventDefault()
@@ -59,7 +66,7 @@ class DisplayOnPage extends Delete{
                 this.getUserInfo(this.todoInput.value)
                 this.arr.sort();
                 this.render();
-                this.count()
+                this.positiveCount()
                 this.todoInput.placeholder = "";
             }else{
                 this.todoInput.placeholder = "Please write something";
@@ -67,10 +74,17 @@ class DisplayOnPage extends Delete{
             e.target.reset()
 
         })
+        this.deleteElem()
     }
 }
 
 let b = new DisplayOnPage(".todo-list-form",".todo-input",".todo-list",".todo-list-title");
 b.showPage()
-b.deleteElem()
-b.count()
+
+
+b.todoList.addEventListener("click",(e) => {
+    if(e.target && e.target.matches(".done-todo")){
+        e.target.parentElement.classList.toggle("line")
+    }
+})
+
