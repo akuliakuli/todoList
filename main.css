@@ -1,0 +1,65 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background-color: #AEC5EB;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    width: 50%;
+    border-radius: 20px;
+    padding-bottom: 20px;
+}
+
+.header{
+    text-align: center;
+    background: rgb(5,90,255);
+    background: linear-gradient(90deg, rgba(5,90,255,1) 0%, rgba(121,158,251,1) 35%, rgba(0,236,255,1) 100%);
+    color: white;
+    width: 100%;
+    border-radius: 10px;
+}
+.currency-converter{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.currency{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    gap: 1.2em;
+    font-size: 1.3em;
+}
+.currency select{
+    padding: 20px;
+    background-color: royalblue;
+    border: none;
+    color: white;
+    border-radius: 2px;
+}
+.currency input{
+    background-color: #D3D3D3;
+    color: white;
+    padding: 20px;
+    border: none;
+}
+.changeValue{
+    width: 60px;
+    height: 60px;
+    background-color: skyblue;
+    border-radius: 100%;
+    cursor: pointer;
+    background-image: url("switch.png");
+    background-size: contain;
+    align-self: center;
+}
