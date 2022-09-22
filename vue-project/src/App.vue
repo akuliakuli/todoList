@@ -1,70 +1,196 @@
 <script setup>
-    import { ref,computed } from 'vue';
+  import { ref } from 'vue';
 
-    let id = 0;
-    const hideCompleted = ref(false);
-    const newTodo = ref('');
-    const todos = ref([]);
-    const input = ref('')
+  const modal = ref(false)
+  const firstElem = ref(false);
+  const secondElem = ref(false);
 
-
-    const filteredTodos = computed(() => {
-        return hideCompleted.value ? todos.value.filter(t => !t.done)
-        : todos.value
-    })
-    function addTodo(){
-        if(newTodo.value !== '' && newTodo.value !== null){
-            todos.value.push({id:id++,text:newTodo.value,done:false})
-            newTodo.value = ''
-            input.value = 'write something todo'
-        }else{
-            input.value = 'PLEASE WRITE SOMETHING'
-        }
-    }
-    function deleteTodo(todo){
-        todos.value = todos.value.filter(t => t !== todo);
-    }
+  function showFirstElement(){
+    firstElem.value = true;
+    secondElem.value = false;
+  }
+  showFirstElement()
+  function showSecondElement(){
+    firstElem.value = false;
+    secondElem.value = true;
+  }
+  function hideModal(){
+    modal.value = false;
+  }
+  function showModal(){
+    modal.value = true;
+  }
 </script>
 
 <template>
-    <h1>Todo</h1>
-         <form @submit.prevent='addTodo' class="form">
-                <input v-model="newTodo" :placeholder="input">
-                <button>SUBMIT</button>
-         </form>
-         <ul>
-            <li class ='todo' v-for="todo in filteredTodos">
-                <input type ='checkbox' v-model="todo.done">
-                <span :class='{completed: todo.done}'>{{todo.text}}</span>
-                <button @click="deleteTodo(todo)">X</button>
-            </li>
-         </ul>
-         <button @click="hideCompleted = !hideCompleted">
-            {{hideCompleted ? 'See All' : 'Hide Completed'}}
-            </button>
+    <div class="container">
+        <div class="modal" v-if="modal">
+                <form @submit.prevent="" action="" class="modal_content_form">
+                    <button class ='modal_btn'  @click ='modal = false'>X</button>
+                    <h1 class ='modal_content_header'>write something that needs to be done</h1>
+                    <input type ='text' placeholder="one step for man one giant leap for mankind" class ='modal_content_input'>
+                    <button class ='modal_content_btn'>SUBMIT</button>                    
+                </form>
+        </div>
+        <div class="todo_box">
+            <div class="todo_header">
+                <div class="todo_header_item" @click="showFirstElement" :class ="{ active: firstElem}">
+                    <img src ='/menu.png' class="todo_img" >
+                </div>
+                <div class="todo_header_item " @click="showSecondElement" :class ="{ active: secondElem}">
+                    <img src ='/calendar.png' class ='todo_img'>
+                </div>
+            </div>
+            <ul class ='todo_items' v-if="firstElem">
+                <li class ='todo_item'>
+                    <input type ='checkbox' class ='todo_checkbox'>
+                    <span class ='todo_text'>SOMETHING</span>
+                    <button class ='todo_btn'>X</button>
+                </li>
+            </ul>
+            <div class="button" @click="modal = true" v-if="firstElem">
+                +
+            </div>
+        </div>
+    </div>
 </template>
 
 <style>
-    h1{
-        background-color: pink;
-        color: purple;
-        font-size: 3em;
-        border: 1px solid lightcoral;
+    .container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width:100%;
+        height: 100vh;
     }
-    .todo{
-        background-color: palevioletred;
-        border: 1px solid paleturquoise;
-        font-size: 2.5em;
-        color:white;
-        max-width: 50%;
+    
+    .todo_box{
+        background-color: #fafafa;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 40%;
+    }
+    .todo_header{
         display: flex;
         align-items: center;
+        justify-content: center;
     }
-    .todo > * {
-        flex-grow: 1;
+    .todo_header_item{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        border: 1px solid gainsboro;
+        background-color: lightgray;
+        cursor: pointer;
     }
-    .completed{
-        text-decoration: line-through;
-        text-decoration-color: aquamarine;
+    .todo_img{
+        margin: 0 auto;
+        max-width: 60px;
+        max-height: 60px;
+    }
+    .todo_items{
+        margin-top: 3em;
+    }
+    .todo_item{
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .todo_checkbox{
+        width: 1.15em;
+        height: 1.15em;
+        border: 0.15em solid royalblue;
+        border-radius: 0.15em;
+        transform: translateY(-0.075em);
+    }
+    .todo_text{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 1.5em;
+        height: 30px;
+    }
+    .todo_btn{
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+    }
+    .todo_btn:hover{
+        border: 1px solid royalblue;
+    }
+    .active{
+        background-color: #fafafa;
+    }
+    .button{
+        align-self: center;
+        border-radius: 100%;
+        background-color: #F7D002;
+        cursor: pointer;
+        color: white;
+        text-align: center;
+        font-size: 3em;
+        padding: 5px;
+        width: 50px;
+        height: 50px;
+    }
+    .modal_content_btn{
+        background-color: #F7D002;
+        border: none;
+        padding: 10px;
+        font-size: 1.3em;
+        cursor: pointer;
+        color: white;
+        border-radius: 5px;
+    }
+    .modal{
+        position: fixed; 
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto; 
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4); 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal_content_form{
+        background-color: #fafafa;
+        height: 20%;
+        gap: 10px;
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal_content_header{
+        font-size: 1.2em;
+        text-transform:uppercase;
+        border-bottom: 2px solid rebeccapurple;
+    }
+    .modal_content_input{
+        width: 50%;
+        padding: 5px;
+        font-size: 0.8em;
+    }
+    .modal_btn{
+        align-self: flex-end;
+        background-color: purple;
+        color: white;
+        margin-right: 10px;
+    }
+
+    .hide{
+        display: none;
+    }
+    .show{
+        display: flex;
     }
 </style>
