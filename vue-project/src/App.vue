@@ -1,6 +1,11 @@
 <script setup>
-  import { ref } from 'vue';
+  import { ref,computed } from 'vue';
 
+  let id = 0;
+
+  const placeholderVal = ref('')
+  const todos = ref([]);
+  const newTodo = ref('');
   const modal = ref(false)
   const firstElem = ref(false);
   const secondElem = ref(false);
@@ -14,21 +19,36 @@
     firstElem.value = false;
     secondElem.value = true;
   }
-  function hideModal(){
-    modal.value = false;
+
+  function addTodo(){
+    if(newTodo.value !== '' && newTodo.value !== 0){
+        todos.value.push({id:id++,text:newTodo.value,done:false});
+        newTodo.value = ''
+        placeholderVal.value = "one step for man one giant leap for mankind"
+        modal.value = false
+    }else{
+        placeholderVal.value = 'write something'
+    }
   }
-  function showModal(){
-    modal.value = true;
+  function deleteTodo(todo){
+    todos.value = todos.value.filter(t => t != todo);
   }
+  const filteredTodos = computed(() => {
+    if(firstElem.value){
+        return todos.value.filter(t => !t.done)
+    }else{
+        return todos.value.filter(t => t.done)
+    }
+  })
 </script>
 
 <template>
     <div class="container">
         <div class="modal" v-if="modal">
-                <form @submit.prevent="" action="" class="modal_content_form">
+                <form @submit.prevent="addTodo" action="" class="modal_content_form">
                     <button class ='modal_btn'  @click ='modal = false'>X</button>
                     <h1 class ='modal_content_header'>write something that needs to be done</h1>
-                    <input type ='text' placeholder="one step for man one giant leap for mankind" class ='modal_content_input'>
+                    <input type ='text' :placeholder="[[placeholderVal]]" class ='modal_content_input' v-model="newTodo">
                     <button class ='modal_content_btn'>SUBMIT</button>                    
                 </form>
         </div>
@@ -42,10 +62,19 @@
                 </div>
             </div>
             <ul class ='todo_items' v-if="firstElem">
-                <li class ='todo_item'>
-                    <input type ='checkbox' class ='todo_checkbox'>
-                    <span class ='todo_text'>SOMETHING</span>
-                    <button class ='todo_btn'>X</button>
+                    <span class ='todo_text'>What needs to be done today</span>
+                <li v-for="todo in filteredTodos" class ='todo_item'>
+                    <input type ='checkbox' class ='todo_checkbox' v-model='todo.done'>
+                    <span class ='todo_text' :class="{done:todo.done}">{{todo.text}}</span>
+                    <button class ='todo_btn' @click="deleteTodo(todo)">X</button>
+                </li>
+            </ul>
+            <ul v-if="secondElem">
+                <span class ='todo_text'>ALREADY DONE</span>
+            <li v-for="todo in filteredTodos" class ='todo_item'>
+                    <input type ='checkbox' class ='todo_checkbox' v-model='todo.done'>
+                    <span class ='todo_text' :class="{done:todo.done}">{{todo.text}}</span>
+                    <button class ='todo_btn' @click="deleteTodo(todo)">X</button>
                 </li>
             </ul>
             <div class="button" @click="modal = true" v-if="firstElem">
@@ -70,7 +99,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        width: 40%;
+        min-width: 800px;
     }
     .todo_header{
         display: flex;
@@ -109,7 +138,6 @@
     .todo_text{
         font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         font-size: 1.5em;
-        height: 30px;
     }
     .todo_btn{
         border: none;
@@ -164,7 +192,8 @@
         background-color: #fafafa;
         height: 20%;
         gap: 10px;
-        width: 40%;
+        min-width: 400px;;
+        padding: 10px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -186,11 +215,24 @@
         color: white;
         margin-right: 10px;
     }
-
+    .done{
+        text-decoration: line-through plum;
+    }
     .hide{
         display: none;
     }
     .show{
         display: flex;
+    }
+    @media (max-width:900px) {
+        .todo_box{
+            min-width: 0;
+            width: 100%;;
+        }
+        .modal_content_form{
+            min-width: 0;
+            width:100%;
+            height: 30%;
+        }
     }
 </style>
